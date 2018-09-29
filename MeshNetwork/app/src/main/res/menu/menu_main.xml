@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+    <item
+        android:title="Personal Messages"
+        android:id="@+id/personalMessagesMenuItem"
+        app:showAsAction="ifRoom"
+        android:icon="@mipmap/pm_menu_icon"
+        android:actionLayout="@layout/notification_badge"
+        android:orderInCategory="1" />
+
+    <item
+        android:title="ID Number"
+        android:id="@+id/idNumberMenuItem"
+        app:showAsAction="never"
+        android:orderInCategory="100" />
+
+</menu>
