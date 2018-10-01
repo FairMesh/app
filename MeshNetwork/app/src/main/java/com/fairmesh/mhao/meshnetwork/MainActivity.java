@@ -28,11 +28,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fairmesh.mhao.meshnetwork.model.Node;
@@ -47,6 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 class UploadMessages extends AsyncTask<String, Void, Void> {
 
@@ -95,7 +98,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+            NetworkInfo activeNetwork = null;
+            if (connectivityManager != null) {
+                activeNetwork = connectivityManager.getActiveNetworkInfo();
+            }
             isOnline = activeNetwork != null && activeNetwork.isConnected();
         }
     };
@@ -200,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
         // Set up ID number and set up node
 
         TelephonyManager tMgr = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
-        long mPhoneNumber = 0;
+        long mPhoneNumber;
         if ((ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_PHONE_STATE)
                 == PackageManager.PERMISSION_GRANTED) && tMgr != null) {
@@ -307,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
                 showConnections(v);
             }
         });
-        unreadMessagesTextView = (TextView) actionView.findViewById(R.id.message_badge);
+        unreadMessagesTextView = actionView.findViewById(R.id.message_badge);
         setupBadge();
 
         return true;
@@ -315,25 +321,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        /*
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-*/
-        int id = item.getItemId();
-
-        if (id == R.id.personalMessagesMenuItem) {
-            // showConnections(item);
-        }
-
         return super.onOptionsItemSelected(item);
-
     }
 
     @Override
@@ -356,10 +344,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        messageEditText = (EditText) findViewById(R.id.createMessage);
-        messagesView = (ListView) findViewById(R.id.messagesListView);
-        toolbar = (Toolbar) findViewById(R.id.mainActivityToolbar);
-        connectionsTextView = (TextView) findViewById(R.id.connectionsTextView);
+        messageEditText = findViewById(R.id.createMessage);
+        messagesView = findViewById(R.id.messagesListView);
+        toolbar = findViewById(R.id.mainActivityToolbar);
+        connectionsTextView = findViewById(R.id.connectionsTextView);
         setSupportActionBar(toolbar);
 
         getPermissions();
@@ -379,15 +367,16 @@ public class MainActivity extends AppCompatActivity {
             boolean[] isOwnMessage = savedInstanceState.getBooleanArray("IS_OWN_MESSAGE");
             String[] messageData = savedInstanceState.getStringArray("MESSAGE_DATA");
             int count = savedInstanceState.getInt("MESSAGE_COUNT");
-
-            for (int i = 0; i < count; i++) {
-                JSONObject messageJSON;
-                try {
-                    messageJSON = new JSONObject(messageData[i]);
-                    Message message = new Message(messageJSON, isOwnMessage[i]);
-                    messageAdapter.add(message);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            if (messageData != null && isOwnMessage != null) {
+                for (int i = 0; i < count; i++) {
+                    JSONObject messageJSON;
+                    try {
+                        messageJSON = new JSONObject(messageData[i]);
+                        Message message = new Message(messageJSON, isOwnMessage[i]);
+                        messageAdapter.add(message);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -407,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 messageJSON.put("message", messageText);
                 messageJSON.put("sender", node.getNodeID());
-                messageJSON.put("time", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
+                messageJSON.put("time", new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US).format(new Date()));
                 messageJSON.put("type", "message");
                 messageJSON.put("latitude", latitude);
                 messageJSON.put("longitude", longitude);
@@ -452,15 +441,20 @@ public class MainActivity extends AppCompatActivity {
         hideKeyboard(this);
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.connections_popup, null);
+        View popupView = null;
+        if (inflater != null) {
+            popupView = inflater.inflate(R.layout.connections_popup, new LinearLayout(this), false);
+        }
 
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true;
-        popupWindow = new PopupWindow(popupView, width, height, focusable);
+        popupWindow = new PopupWindow(popupView, width, height, true);
         popupWindow.setAnimationStyle(R.style.popup_window_animation);
 
-        ListView peerList = popupView.findViewById(R.id.connections_listview);
+        ListView peerList = null;
+        if (popupView != null) {
+            peerList = popupView.findViewById(R.id.connections_listview);
+        }
 
         ArrayList<String> IDArray = node.getPeerIDs();
         for (int i = 0; i < IDArray.size(); i++) {
@@ -490,19 +484,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         PeerListAdapter peerListAdapter = new PeerListAdapter(this);
-        peerList.setAdapter(peerListAdapter);
+        if (peerList != null) {
+            peerList.setAdapter(peerListAdapter);
+        }
         peerListAdapter.addAll(IDArray, generalUnreadMessages);
 
         popupWindow.setElevation(10);
         popupWindow.showAtLocation(messagesView, Gravity.CENTER, 0, 0);
 
-        popupView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                popupWindow.dismiss();
-                return true;
-            }
-        });
+        if (popupView != null) {
+            popupView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupWindow.dismiss();
+                }
+            });
+        }
     }
 
     public void refreshFrames() throws JSONException {
@@ -518,7 +515,7 @@ public class MainActivity extends AppCompatActivity {
     public void changeMessageRecipient(View v) throws JSONException {
         messageAdapter.clear();
         popupWindow.dismiss();
-        TextView peerEntry = (TextView) v.findViewById(R.id.peer_textview_individual);
+        TextView peerEntry = v.findViewById(R.id.peer_textview_individual);
         String peerEntryString = peerEntry.getText().toString().split(" ", 2)[0];
         if (peerEntryString.contains("General")) {
             recipient = 0;
