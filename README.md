@@ -5,6 +5,7 @@ Enabling communication without cellular or internet
 ## Try It!
 
 Sign up for the [beta on Google Play](https://play.google.com/apps/testing/com.fairmesh.mhao.meshnetwork).
+Access the [FairMesh Dashboard](https://fairmesh-dashboard.mybluemix.net/)
 
 ## Team Members
 
