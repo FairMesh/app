@@ -10,8 +10,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,16 +21,12 @@ class MessageViewHolder {
 
 public class MessageAdapter extends BaseAdapter {
 
-    private List<Message> messages = new ArrayList<Message>();
+    private List<Message> messages = new ArrayList<>();
     private Context context;
     private boolean recentEntryAnimated = true;
 
-    public MessageAdapter(Context context) {
+    MessageAdapter(Context context) {
         this.context = context;
-    }
-
-    public void addList(List<Message> messageData) {
-        messages.addAll(messageData);
     }
 
     public void add(Message message) {
@@ -61,26 +55,22 @@ public class MessageAdapter extends BaseAdapter {
         return position;
     }
 
-    public List<Message> getArrayList() {
-        return messages;
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         MessageViewHolder holder = new MessageViewHolder();
         LayoutInflater messageInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         Message message = messages.get(position);
         String messageText = message.getText();
-        if (messageText != null) {
+        if (messageText != null && messageInflater != null) {
             if (message.isBelongsToCurrentUser()) {
-                convertView = messageInflater.inflate(R.layout.sent_message, null);
-                holder.messageBody = (TextView) convertView.findViewById(R.id.sent_message_body);
+                convertView = messageInflater.inflate(R.layout.sent_message, parent, false);
+                holder.messageBody = convertView.findViewById(R.id.sent_message_body);
                 convertView.setTag(holder);
                 holder.messageBody.setText(messageText);
             } else {
-                convertView = messageInflater.inflate(R.layout.received_message, null);
-                holder.name = (TextView) convertView.findViewById(R.id.name);
-                holder.messageBody = (TextView) convertView.findViewById(R.id.message_body);
+                convertView = messageInflater.inflate(R.layout.received_message, parent, false);
+                holder.name = convertView.findViewById(R.id.name);
+                holder.messageBody = convertView.findViewById(R.id.message_body);
                 convertView.setTag(holder);
 
                 String sender = message.getTime() + "\nID: " + message.getID();

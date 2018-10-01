@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainActivityLinearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -34,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/mainActivityToolbar"
-        android:text="Users in Mesh: 0"
+        android:text="@string/users_in_mesh_default"
         android:paddingBottom="4dp"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
         android:gravity="center"
@@ -57,13 +58,13 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:background="@drawable/textfield_shape"
-            android:hint="Messaging Disabled: No Users"
+            android:hint="@string/messaging_disabled"
             android:padding="2dp"
             android:paddingEnd="40dp"
-            android:paddingHorizontal="10dp"
             android:paddingStart="10dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:enabled="false"/>
+            android:enabled="false"
+            android:inputType="textMultiLine"/>
 
         <Button
             android:id="@+id/sendFramesButton"
