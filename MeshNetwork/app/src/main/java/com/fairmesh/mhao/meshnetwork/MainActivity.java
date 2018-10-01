@@ -35,7 +35,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.fairmesh.mhao.meshnetwork.model.Node;
+import com.fairmesh.mhao.meshnetwork.util.Node;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -381,8 +381,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendData(View view) {
         if (!started) {
-            started = true;
-            node = new Node(this);
+            setupNodeID();
             node.start();
             return;
         }

@@ -1,4 +1,4 @@
-package com.fairmesh.mhao.meshnetwork.model;
+package com.fairmesh.mhao.meshnetwork.util;
 
 import com.fairmesh.mhao.meshnetwork.MainActivity;
 
@@ -7,7 +7,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Random;
 
 import io.underdark.Underdark;
 import io.underdark.transport.Link;
@@ -31,34 +30,6 @@ public class Node implements TransportListener {
     public ArrayList<JSONObject> unsentMessages = new ArrayList<>(); // Messages that have not been uploaded to server
     public ArrayList<JSONObject> unreadMessages = new ArrayList<>(); // Messages that have not been read by user
 
-    public Node(MainActivity activity) {
-        this.activity = activity;
-
-        receivedMessage = new JSONObject();
-
-        do {
-            nodeId = new Random().nextLong();
-        } while (nodeId == 0);
-
-        if (nodeId < 0)
-            nodeId = -nodeId;
-
-        configureLogging();
-
-        EnumSet<TransportKind> kinds = EnumSet.of(TransportKind.BLUETOOTH, TransportKind.WIFI);
-        //kinds = EnumSet.of(TransportKind.WIFI);
-        //kinds = EnumSet.of(TransportKind.BLUETOOTH);
-
-        this.transport = Underdark.configureTransport(
-                234235,
-                nodeId,
-                this,
-                null,
-                activity.getApplicationContext(),
-                kinds
-        );
-    }
-
     public Node(MainActivity activity, long ID) {
         this.activity = activity;
 
@@ -69,8 +40,6 @@ public class Node implements TransportListener {
         configureLogging();
 
         EnumSet<TransportKind> kinds = EnumSet.of(TransportKind.BLUETOOTH, TransportKind.WIFI);
-        //kinds = EnumSet.of(TransportKind.WIFI);
-        //kinds = EnumSet.of(TransportKind.BLUETOOTH);
 
         this.transport = Underdark.configureTransport(
                 234235,
