@@ -1,26 +1,19 @@
 package com.fairmesh.mhao.meshnetwork.model;
 
-import android.content.Context;
+import com.fairmesh.mhao.meshnetwork.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.impl.StaticLoggerBinder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Random;
 
 import io.underdark.Underdark;
-
-import com.fairmesh.mhao.meshnetwork.MainActivity;
-
 import io.underdark.transport.Link;
 import io.underdark.transport.Transport;
 import io.underdark.transport.TransportKind;
 import io.underdark.transport.TransportListener;
-import io.underdark.util.nslogger.NSLogger;
-import io.underdark.util.nslogger.NSLoggerAdapter;
 
 public class Node implements TransportListener {
     private boolean running;
@@ -28,14 +21,11 @@ public class Node implements TransportListener {
     private long nodeId;
     private Transport transport;
     private JSONObject receivedMessage;
-    private String pingTime;
 
     private ArrayList<Link> links = new ArrayList<>();
-    private int framesCount = 0;
 
     private ArrayList<JSONObject> newMessages = new ArrayList<>(); // Messages that have not been displayed
     private ArrayList<JSONObject> allMessages = new ArrayList<>(); // All received messages
-    private ArrayList<JSONObject> allPings = new ArrayList<>(); // All pings from other devices
     private ArrayList<String> connections = new ArrayList<>(); // IDs of all pings within a time period
     private ArrayList<String> oldConnections = new ArrayList<>(); // Connections gets pushed to this, this gets displayed to user
     public ArrayList<JSONObject> unsentMessages = new ArrayList<>(); // Messages that have not been uploaded to server
@@ -93,13 +83,6 @@ public class Node implements TransportListener {
     }
 
     private void configureLogging() {
-    /*
-        NSLoggerAdapter adapter = (NSLoggerAdapter)
-                StaticLoggerBinder.getSingleton().getLoggerFactory().getLogger(Node.class.getName());
-        adapter.logger = new NSLogger(activity.getApplicationContext());
-        adapter.logger.connect("192.168.5.203", 50000);
-
-        */
 
         Underdark.configureLogging(true);
 
@@ -121,21 +104,12 @@ public class Node implements TransportListener {
         transport.stop();
     }
 
-    public ArrayList<Link> getLinks() {
-
-        return links;
-    }
-
     public ArrayList<JSONObject> getAllMessages() {
         return allMessages;
     }
 
     public long getNodeID() {
         return nodeId;
-    }
-
-    public void setPingTime(String time) {
-        pingTime = time;
     }
 
     public void clearConnections() {
@@ -180,10 +154,6 @@ public class Node implements TransportListener {
         unsentMessages.clear();
     }
 
-    public JSONObject getMessageJSON() {
-        return receivedMessage;
-    }
-
     //region TransportListener
     @Override
     public void transportNeedsActivity(Transport transport, ActivityCallback callback) {
@@ -200,7 +170,6 @@ public class Node implements TransportListener {
         links.remove(link);
 
         if (links.isEmpty()) {
-            framesCount = 0;
             try {
                 activity.refreshFrames();
             } catch (JSONException e) {
@@ -211,7 +180,6 @@ public class Node implements TransportListener {
 
     @Override
     public void transportLinkDidReceiveFrame(Transport transport, Link link, byte[] frameData) {
-        ++framesCount;
         try {
             receivedMessage = new JSONObject(new String(frameData));
 
@@ -223,7 +191,6 @@ public class Node implements TransportListener {
             }
 
             if (!isDuplicatePing && !receivedMessage.get("sender").equals(nodeId)) {
-                allPings.add(receivedMessage);
                 connections.add(receivedMessage.get("sender").toString());
                 JSONObject pingJSON = new JSONObject();
                 pingJSON.put("type", "ping");

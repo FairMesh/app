@@ -1,6 +1,7 @@
 package com.fairmesh.mhao.meshnetwork;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,15 +27,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fairmesh.mhao.meshnetwork.model.Node;
@@ -171,8 +169,6 @@ public class MainActivity extends AppCompatActivity {
                     pingJSON = null;
                 }
 
-                node.setPingTime(time);
-
                 if (pingJSON != null) {
                     node.broadcastData(pingJSON.toString().getBytes());
                 }
@@ -202,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
         }, refreshDelay);
     }
 
+    @SuppressLint("HardwareIds")
     private void setupNodeID() {
         // Set up ID number and set up node
 

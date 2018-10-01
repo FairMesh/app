@@ -7,7 +7,7 @@ public class Message {
     private JSONObject messageData;
     private boolean belongsToCurrentUser;
 
-    public Message(JSONObject data, boolean currentUser) {
+    Message(JSONObject data, boolean currentUser) {
         belongsToCurrentUser = currentUser;
         messageData = data;
     }
