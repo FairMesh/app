@@ -35,13 +35,14 @@
 
 <script>
 export default {
-  name: "PieGraph",
+  name: "Graphs",
   props: {
     data: Array,
     show_pie: Boolean
   },
   computed: {
     chartData: function() {
+      // Filters source data into number of requests in categories (e.g. food, med supplies, etc)
       return this.data.reduce((acc, cur) => {
         const key = cur.label;
         if (key in acc) acc[key] += cur.value;
@@ -50,6 +51,7 @@ export default {
       }, {});
     },
     foodBar: function() {
+      // Filters data into different types of food (e.g. food types: pasta, tomato, cucumber, halal, etc)
       const d = this.data.filter(x => x.label === "food");
       return d.reduce((acc, cur) => {
         const key = cur.type;
@@ -59,6 +61,7 @@ export default {
       }, {});
     },
     medBar: function() {
+      // Filters source data into different types of food ....
       const d = this.data.filter(x => x.label === "medicine");
       return d.reduce((acc, cur) => {
         const key = cur.type;
@@ -69,6 +72,7 @@ export default {
     },
 
     mapCenter: function() {
+      // Calculates center of displayed map based on the location of datapoints
       const d = this.data.filter(x => x.long != 0 && x.lat != 0);
       let longArray = [];
       let latArray = [];
@@ -92,7 +96,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;

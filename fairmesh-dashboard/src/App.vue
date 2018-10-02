@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-      <PieGraph v-bind:data="ibm_db_data" v-bind:show_pie="!show"/>
+      <Graphs v-bind:data="ibm_db_data" v-bind:show_pie="!show"/>
   </div>
 </template>
 
 <script>
-import PieGraph from "./components/PieGraph.vue";
+import Graphs from "./components/Graphs.vue";
 const axios = require("axios");
 export default {
   name: "app",
   components: {
-    PieGraph
+    Graphs
   },
   data: function() {
     return {
@@ -18,26 +18,21 @@ export default {
       show: false
     };
   },
-  methods: {
-    //  getData() {}
-  },
   mounted: function() {
-    // var temp = ["test"];
+    // fetch data from server every 10 seconds
+    window.setInterval(() => {
     var self = this;
     return axios
       .get("https://fairmesh-dashboard.mybluemix.net/api/getData")
       .then(function(resp) {
-        console.log("Response", resp);
         self.show = true;
         self.ibm_db_data = resp.data;
       })
       .catch(function(error) {
-        console.log("noooo issa error tingg fam");
+        console.log("Failed to fetch data");
         console.log(error);
       });
-    // window.setInterval(() => {
-    // 	this.show = !this.show;
-    // }, 1000);
+    }, 10000);
   }
 };
 </script>
