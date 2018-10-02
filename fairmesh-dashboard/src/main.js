@@ -1,26 +1,19 @@
-import Vue from 'vue';
-import App from './App.vue';
-import Home from './components/Home.vue';
-import About from './components/About.vue';
+import Vue from "vue";
+import App from "./App.vue";
+import VueChartkick from "vue-chartkick";
+import Chart from "chart.js";
+import * as VueGoogleMaps from "vue2-google-maps";
 
 Vue.config.productionTip = false;
 
-const routes = {
-	'/': App,
-	'/home': Home
-};
+Vue.use(VueChartkick, { adapter: Chart });
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: "AIzaSyD64FxzbB5yCjm1YW0urEEwrsP76KNYinI",
+    libraries: "places"
+  }
+});
 
 new Vue({
-	el: '#app',
-	data: {
-		currentRoute: window.location.pathname
-	},
-	computed: {
-		ViewComponent() {
-			return routes[this.currentRoute] || About;
-		}
-	},
-	render(h) {
-		return h(this.ViewComponent);
-	}
-});
+  render: h => h(App)
+}).$mount("#app");
