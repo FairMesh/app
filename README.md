@@ -2,6 +2,8 @@
 
 Enabling communication without cellular or internet
 
+This was a completely student-lead effort of co-ops at Fairventures lab
+
 ## Try It!
 
 Sign up for the [beta on Google Play](https://play.google.com/apps/testing/com.fairmesh.mhao.meshnetwork).  
